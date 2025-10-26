@@ -208,3 +208,10 @@ __marimo__/
 
 # Local
 flag.txt
+Dockerfile
+entrypoint.sh
+LICENSE
+README.md
+*.html
+*.js
+*.css
