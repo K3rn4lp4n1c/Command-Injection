@@ -10,6 +10,7 @@ import tempfile
 app = Flask(__name__)
 CORS(app)
 
+TEST_ASSET = "exiftool_test.png"
 app.config["MAX_CONTENT_LENGTH"] = 50 * 1024 * 1024  # 50 MiB
 
 @app.route("/metadata", methods=["POST", "OPTIONS"])
@@ -18,48 +19,55 @@ def metadata():
         return ("", 204)
 
     if "file" not in request.files:
-        return jsonify({"ok": False, "error": "No file part in the request (expected field 'file')"}), 400
+        return jsonify({"ok": False, "error": "Malformed request"}), 400
 
     file_storage = request.files["file"]
     if not file_storage.filename:
         return jsonify({"ok": False, "error": "Invalid file"}), 400
     
     path = secure_filename(file_storage.filename)
+    create_temp = False
     try:
-        if path != "exiftool_test.png":
+        if path != TEST_ASSET:
             _, ext = os.path.splitext(path)
             with tempfile.NamedTemporaryFile(delete=False, prefix="upload_", suffix=(ext or ""), dir=None) as tmp:
+                create_temp = True  
                 path = tmp.name
             file_storage.save(path)
+        else: path = os.path.join(os.path.dirname(__file__), TEST_ASSET)
         try:
-            proc = run(f"exiftool -j {path}", stdout=PIPE, stderr=PIPE, shell=True)
+            proc = run(f"exiftool -j {path}", stdout=PIPE, stderr=PIPE, shell=True, check=True, text=True)
         except CalledProcessError as e:
             return jsonify({
                 "ok": False,
-                "error": "exiftool failed",
-                "stderr": e.stderr.strip(),
-                "returncode": e.returncode
+                "error": "Image Checker failed.",
             }), 500
 
         try:
             payload = json.loads(proc.stdout)
-        except:
-            print(proc.stdout)
+        except json.JSONDecodeError:
+            print(proc.stdout, proc.stderr)
             return jsonify({
                 "ok": False,
-                "error": "Failed to parse exiftool output as JSON",
+                "error": "Exiftool output is invalid",
+            }), 500
+        except Exception as e:
+            print("Unexpected error parsing exiftool output:", str(e))
+            return jsonify({
+                "ok": False,
+                "error": "Unexpected error parsing Exiftool output",
             }), 500
         is_image = False
 
         try:
-            first = None
+            first = mime = None
             if isinstance(payload, list) and len(payload) > 0 and isinstance(payload[0], dict):
                 first = payload[0]
             elif isinstance(payload, dict):
                 first = payload
 
             if isinstance(first, dict):
-                mime = first.get("MIMEType")
+                mime = first.get("MIMEType", "")
             if isinstance(mime, str) and mime.lower().startswith("image/"):
                 is_image = True
         except Exception:
@@ -68,7 +76,7 @@ def metadata():
         return jsonify({"ok": True, "is_image": is_image}), 200
     
     finally:
-        if path and os.path.exists(path) and path.startswith('upload_'):
+        if create_temp and path and os.path.exists(path):
             try:
                 os.remove(path)
             except OSError:
