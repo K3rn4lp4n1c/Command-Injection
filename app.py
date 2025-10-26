@@ -1,9 +1,11 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from subprocess import run, PIPE, CalledProcessError
+from werkzeug.utils import secure_filename
 
 import json
 import os
+import tempfile
 
 app = Flask(__name__)
 CORS(app)
@@ -22,9 +24,13 @@ def metadata():
     if not file_storage.filename:
         return jsonify({"ok": False, "error": "Invalid file"}), 400
     
-    path = file_storage.filename
+    path = secure_filename(file_storage.filename)
     try:
-        file_storage.save(path)
+        if path != "exiftool_test.png":
+            _, ext = os.path.splitext(path)
+            with tempfile.NamedTemporaryFile(delete=False, prefix="upload_", suffix=(ext or ""), dir=None) as tmp:
+                path = tmp.name
+            file_storage.save(path)
         try:
             proc = run(f"exiftool -j {path}", stdout=PIPE, stderr=PIPE, shell=True)
         except CalledProcessError as e:
@@ -38,6 +44,7 @@ def metadata():
         try:
             payload = json.loads(proc.stdout)
         except:
+            print(proc.stdout)
             return jsonify({
                 "ok": False,
                 "error": "Failed to parse exiftool output as JSON",
@@ -61,13 +68,11 @@ def metadata():
         return jsonify({"ok": True, "is_image": is_image}), 200
     
     finally:
-        if path and os.path.exists(path):
+        if path and os.path.exists(path) and path.startswith('upload_'):
             try:
-                KEEP = {"app.py", "flag.txt", "test_image.png"}
-                for filename in os.listdir("."):
-                    if not filename in KEEP and not os.path.isdir(filename):
-                        os.remove(filename)
+                os.remove(path)
             except OSError:
+                # best-effort cleanup
                 pass
 
 @app.route("/health", methods=["GET"])
