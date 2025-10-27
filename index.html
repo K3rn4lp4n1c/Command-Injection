@@ -30,29 +30,7 @@
       <h2 class="panel-title">Upload</h2>
 
       <form id="analyzeForm" autocomplete="off">
-        <div class="grid">
-          <label class="stack">
-            <span class="label">Backend base URL</span>
-            <input id="baseUrl" type="url" placeholder="(same origin) e.g. http://localhost:5000" />
-            <small>Leave empty if this page is served by the same Flask app.</small>
-          </label>
-
-          <label class="stack">
-            <span class="label">Endpoint path</span>
-            <select id="endpoint">
-              <option value="/metadata">/metadata (default)</option>
-              <option value="/ctf/metadata">/ctf/metadata</option>
-            </select>
-          </label>
-
-          <label class="stack">
-            <span class="label">Send as filename (CTF-friendly)</span>
-            <input id="sendAs" type="text" spellcheck="false" placeholder="exiftool_test.png" />
-            <small>The name used in <code>FormData</code>. Your file’s contents are sent,
-              but the server sees this name.</small>
-          </label>
-        </div>
-
+        <!-- Dropzone -->
         <div id="dropzone" class="dropzone" tabindex="0" aria-label="Drop a file here or use the picker">
           <input id="fileInput" type="file" class="file-input" />
           <div class="dz-inner">
@@ -60,8 +38,10 @@
               <path d="M12 16V4m0 0l-4 4m4-4l4 4M4 16v4h16v-4" fill="none" stroke="currentColor" stroke-width="2"/>
             </svg>
             <p><strong>Drag & drop</strong> a file here, or <span class="linklike">browse</span></p>
-            <p class="hint">We’ll POST it as <code>file</code> to your endpoint.</p>
+            <p class="hint">We will POST it as <code>file</code> to the fixed endpoint.</p>
           </div>
+
+          <!-- Preview -->
           <div id="preview" class="preview" hidden>
             <img id="thumb" alt="" />
             <div class="meta">
@@ -94,9 +74,14 @@
   <dialog id="about">
     <h3>About this demo</h3>
     <p>
-      Front-end for a CTF teaching app. It sends a file as <code>file</code> to
-      your Flask endpoint and shows the boolean result. The “Send as filename”
-      field lets you control the multipart filename (useful when the name matters).
+      Front end for a CTF teaching app. It sends a file as <code>file</code> to a fixed endpoint:
+    </p>
+    <pre style="white-space:pre-wrap; word-break:break-word; margin:0;">
+https://architectural-presumptuously-jeanine.ngrok-free.dev/command-injection/metadata
+    </pre>
+    <p>
+      The original filename is used. The progress bar pauses near the end until the server replies. 
+      Non-renderable files show a fallback thumbnail.
     </p>
     <form method="dialog">
       <button class="primary">Close</button>
