@@ -1,7 +1,8 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, make_response
 from flask_cors import CORS
 from subprocess import run, PIPE, CalledProcessError
 from werkzeug.utils import secure_filename
+from functools import wraps
 
 import json
 import os
@@ -13,7 +14,18 @@ CORS(app)
 TEST_ASSET = "exiftool_test.png"
 app.config["MAX_CONTENT_LENGTH"] = 50 * 1024 * 1024  # 50 MiB
 
+def log_req(f):
+    @wraps(f)
+    def wrapper(*args, **kwargs):
+        client = request.headers.get("X-Forwarded-For", request.remote_addr)
+        print(f"-> {request.method} {request.full_path} from {client}", flush=True)
+        resp = make_response(f(*args, **kwargs))
+        print(f"<- {resp.status_code} {request.path}", flush=True)
+        return resp
+    return wrapper
+
 @app.route("/metadata", methods=["POST", "OPTIONS"])
+@log_req
 def metadata():
     if request.method == "OPTIONS":
         return ("", 204)
