@@ -43,6 +43,7 @@ RUN parent="$(dirname "$PWD")" \
 
 # Non-root user for the app
 RUN useradd -m -U -s /bin/bash ctf
+USER ctf
 
 EXPOSE 5000
 
