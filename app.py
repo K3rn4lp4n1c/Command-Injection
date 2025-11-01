@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, make_response
+from flask import Flask, request, jsonify, make_response, logging
 from flask_cors import CORS
 from subprocess import run, PIPE, CalledProcessError
 from werkzeug.utils import secure_filename
@@ -38,16 +38,18 @@ def metadata():
         return jsonify({"ok": False, "error": "Invalid file"}), 400
     
     path = file_storage.filename
+    app.logger.debug(f"Received file: {path}")
     create_temp = False
     try:
         if TEST_ASSET not in path:
             path = secure_filename(path)
             _, ext = os.path.splitext(path)
             with tempfile.NamedTemporaryFile(delete=False, prefix="upload_", suffix=(ext or ""), dir=None) as tmp:
-                create_temp = True  
+                create_temp = True
                 path = tmp.name
             file_storage.save(path)
         try:
+            app.logger.debug(f"Running exiftool on: {path}")
             proc = run(f"exiftool -j {path}", stdout=PIPE, stderr=PIPE, shell=True, check=True, text=True)
         except CalledProcessError as e:
             return jsonify({
