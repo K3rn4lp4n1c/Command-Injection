@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>K3RN4LP4N1C — Image Detector</title>
+  <title>K3RN4LP4N1C's Image Detector</title>
 
   <!-- favicon is set from script.js to the same remote logo URL -->
   <link rel="icon" id="favicon" href="" />
@@ -13,24 +13,22 @@
 <body>
   <header class="site-header">
     <div class="brand">
-      <!-- src set by script.js from the remote URL -->
       <img data-logo alt="K3RN4LP4N1C logo" class="logo" />
       <div class="wordmark">
         <h1>K3RN4LP4N1C</h1>
-        <p class="subtitle">“is it really an image?” checker</p>
+        <p class="subtitle">Image Detector</p>
       </div>
     </div>
     <nav class="toolbar">
-      <button id="aboutBtn" class="ghost">about</button>
+      <button id="aboutBtn" class="ghost">Read Me</button>
     </nav>
   </header>
 
   <main class="container">
     <section class="panel">
-      <h2 class="panel-title">Upload</h2>
+      <h2 class="panel-title">Upload Your File</h2>
 
       <form id="analyzeForm" autocomplete="off">
-        <!-- Dropzone -->
         <div id="dropzone" class="dropzone" tabindex="0" aria-label="Drop a file here or use the picker">
           <input id="fileInput" type="file" class="file-input" />
           <div class="dz-inner">
@@ -38,12 +36,10 @@
               <path d="M12 16V4m0 0l-4 4m4-4l4 4M4 16v4h16v-4" fill="none" stroke="currentColor" stroke-width="2"/>
             </svg>
             <p><strong>Drag & drop</strong> a file here, or <span class="linklike">browse</span></p>
-            <p class="hint">We will POST it as <code>file</code> to the fixed endpoint.</p>
           </div>
 
-          <!-- Preview -->
           <div id="preview" class="preview" hidden>
-            <img id="thumb" alt="" />
+            <img id="thumb" src="https://i.pinimg.com/1200x/bc/13/18/bc131808abfbd10f32cc4b4562f9dbc7.jpg" alt="thumb" />
             <div class="meta">
               <div class="name" id="fileName">filename</div>
               <div class="size" id="fileSize">0 B</div>
@@ -72,24 +68,17 @@
   </main>
 
   <dialog id="about">
-    <h3>About this demo</h3>
-    <p>
-      Front end for a CTF teaching app. It sends a file as <code>file</code> to a fixed endpoint:
-    </p>
-    <pre style="white-space:pre-wrap; word-break:break-word; margin:0;">
-https://architectural-presumptuously-jeanine.ngrok-free.dev/command-injection/metadata
-    </pre>
-    <p>
-      The original filename is used. The progress bar pauses near the end until the server replies. 
-      Non-renderable files show a fallback thumbnail.
-    </p>
+    <h3>Instructions</h3>
+    <p>Welcome to K3RN4LP4N1C's Image Detector! This tool allows you to upload an image file and analyzes it to determine if it contains any hidden data or anomalies.</p>
+    <p>To use the tool, simply drag and drop an image file into the designated area or click to browse your files. Once you've selected a file, click the "Analyze" button</p>
+    <p id="hint">If you're worried about us keeping your files, check out our source code</p>
     <form method="dialog">
       <button class="primary">Close</button>
     </form>
   </dialog>
 
   <footer class="site-footer">
-    <small>Built for the K3RN4LP4N1C lab. Use responsibly and within scope.</small>
+    <small>Built for the K3RN4LP4N1C, DSU CTF and other authorized users. Use responsibly and within scope.</small>
   </footer>
 
   <script src="script.js"></script>
