@@ -68,8 +68,8 @@ input[type="url"]:focus, input[type="text"]:focus, select:focus{ border-color: v
 small{ color: var(--muted); }
 
 .dropzone{
-  position:relative; margin-top:14px; border: 2px dashed rgba(166,255,0,.35);
-  border-radius: 14px; min-height: 170px; display:flex; align-items:center; justify-content:center;
+  position:relative; margin-top:14px; border: 2px dashed rgba(166,255,0,.35); padding: 1rem;
+  border-radius: 14px; min-height: 170px; display:flex; align-items:center; justify-content:space-evenly;
   background: repeating-linear-gradient(135deg, rgba(166,255,0,.06), rgba(166,255,0,.06) 10px, rgba(0,0,0,.05) 10px, rgba(0,0,0,.05) 20px), #1a1f16;
   transition: transform .15s ease, box-shadow .15s ease, border-color .2s ease;
 }
@@ -81,10 +81,12 @@ small{ color: var(--muted); }
 .hint{ color:var(--muted); font-size:.9rem; margin-top:6px; }
 .linklike{ color:var(--accent); text-decoration: underline; }
 
-.preview{ display:flex; align-items:center; gap:14px; width:100%; padding:12px; }
+.preview{ display:flex; align-items:center; gap:14px; width:fit-content; padding:12px; }
 .preview img{ width:64px; height:64px; border-radius:10px; object-fit:cover; background:#111; border:1px solid #2f3328; }
 .preview .name{ font-weight:600; }
 .preview .size{ color:var(--muted); font-size:.9rem; }
+
+#hint { color: transparent;}
 
 .actions{ display:flex; gap:10px; margin-top:14px; }
 button{
@@ -105,8 +107,9 @@ button.ghost:hover{ border-color:var(--accent); color:var(--accent); }
 .progress-wrap{ margin-top:12px; background:#0f120d; border:1px solid #2a2e26; border-radius:999px; padding:3px; }
 .progress{ height:10px; width:0%; background: linear-gradient(90deg, var(--accent), var(--ok)); border-radius:999px; transition: width .2s ease; }
 
+.results{ height: fit-content;}
 .results .result-card{
-  display:grid; gap:10px; padding:14px; border-radius:12px; background:#13170f; border:1px solid #2c3127; min-height:84px;
+  display:grid; gap:10px; padding:14px; border-radius:12px; background:#13170f; border:1px solid #2c3127;
 }
 .result-pill{
   display:inline-block; padding:6px 10px; border-radius:999px; font-weight:700; letter-spacing:.4px;
