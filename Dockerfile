@@ -28,7 +28,7 @@ RUN set -eux; \
     fi
 
 # --- Flag from your filesystem (baked in) ---
-COPY flag.txt /flag.txt
+COPY flag.txt /app/flag.txt
 RUN set -eux; \ 
     find /app -type f -exec chown root:root {} + -exec chmod 444 {} +
 
