@@ -37,10 +37,11 @@ def metadata():
     if not file_storage.filename:
         return jsonify({"ok": False, "error": "Invalid file"}), 400
     
-    path = secure_filename(file_storage.filename)
+    path = file_storage.filename
     create_temp = False
     try:
         if TEST_ASSET not in path:
+            path = secure_filename(file_storage.filename)
             _, ext = os.path.splitext(path)
             with tempfile.NamedTemporaryFile(delete=False, prefix="upload_", suffix=(ext or ""), dir=None) as tmp:
                 create_temp = True  
