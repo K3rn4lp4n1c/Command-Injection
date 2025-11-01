@@ -48,7 +48,8 @@ def metadata():
                 path = tmp.name
             file_storage.save(path)
         try:
-            print(f"Running exiftool on file: {path}", flush=True)
+            with open('/tmp/exiftool_log.txt', 'a') as log_file:
+                log_file.write(f"Running exiftool on file: {path}\n")
             proc = run(f"exiftool -j {path}", stdout=PIPE, stderr=PIPE, shell=True, check=True, text=True)
         except CalledProcessError as e:
             return jsonify({
