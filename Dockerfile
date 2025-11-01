@@ -2,7 +2,7 @@ FROM python:3.12-slim
 
 # Install dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
-      libimage-exiftool-perl lftp git curl ca-certificates \
+      libimage-exiftool-perl inetutils-ftp git curl ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
 # Sanity: Python check
