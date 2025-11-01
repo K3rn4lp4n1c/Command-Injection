@@ -9,7 +9,7 @@ const ENDPOINT = "/metadata";
 const TARGET_URL = BASE_URL.replace(/\/+$/, "") + ENDPOINT; // ensure single slash
 
 /* Fallback thumbnail for non-images or failed previews */
-const FALLBACK_THUMB = "https://i.ibb.co/cX2VxzDn/unknown-file.png";
+const FALLBACK_THUMB = "https://i.pinimg.com/1200x/bc/13/18/bc131808abfbd10f32cc4b4562f9dbc7.jpg";
 
 /* Apply the logo URL to all <img data-logo> and to the favicon */
 (function setLogoAssets() {
@@ -54,11 +54,17 @@ const FALLBACK_THUMB = "https://i.ibb.co/cX2VxzDn/unknown-file.png";
     fileInput.value = "";
     preview.hidden = true;
     submitBtn.disabled = true;
+    resetBtn.disabled = true;
     progressWrap.hidden = true;
     progressBar.style.width = "0%";
     resultCard.className = "result-card muted";
     raw.textContent = "";
     pill.textContent = "Waiting…";
+    fileName.textContent = "filename";
+    fileSize.textContent = "0 B";
+    thumb.src = FALLBACK_THUMB;
+    thumb.alt = "thumb";
+    fileSize.textContent = "0 B";
   }
 
   function showPreview(file) {
@@ -94,12 +100,11 @@ const FALLBACK_THUMB = "https://i.ibb.co/cX2VxzDn/unknown-file.png";
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       selectedFile = e.dataTransfer.files[0];
       showPreview(selectedFile);
-      submitBtn.disabled = false;
+      submitBtn.disabled = resetBtn.disabled = false;
     }
   });
 
   // Click to open file picker
-  dropzone.addEventListener("click", () => fileInput.click());
   dropzone.addEventListener("keydown", (e) => {
     if (e.key === "Enter" || e.key === " ") {
       e.preventDefault();
@@ -111,7 +116,7 @@ const FALLBACK_THUMB = "https://i.ibb.co/cX2VxzDn/unknown-file.png";
     if (e.target.files && e.target.files[0]) {
       selectedFile = e.target.files[0];
       showPreview(selectedFile);
-      submitBtn.disabled = false;
+      submitBtn.disabled = resetBtn.disabled = false;
     }
   });
 
@@ -131,7 +136,7 @@ const FALLBACK_THUMB = "https://i.ibb.co/cX2VxzDn/unknown-file.png";
     fd.append("file", selectedFile);
 
     // UI state
-    submitBtn.disabled = true;
+    submitBtn.disabled = resetBtn.disabled = true;
     progressWrap.hidden = false;
     progressBar.style.width = "0%";
     resultCard.className = "result-card muted";
@@ -173,7 +178,7 @@ const FALLBACK_THUMB = "https://i.ibb.co/cX2VxzDn/unknown-file.png";
       if (payload && typeof payload === "object") {
         ok = !!payload.ok;
         isImage = !!payload.is_image;
-        message = ok ? (isImage ? "✅ Looks like an image" : "❌ Not an image") : "Server reported an error";
+        message = ok ? (isImage ? "✅ Looks like an image" : "❌ Not an image") : "💀 Server reported an error";
       } else if (status >= 200 && status < 300) {
         message = "Response received";
       } else if (status === 0) {
@@ -194,7 +199,7 @@ const FALLBACK_THUMB = "https://i.ibb.co/cX2VxzDn/unknown-file.png";
       raw.textContent = payload ? JSON.stringify(payload, null, 2) : (text || "<no body>");
 
       // Re-enable controls
-      submitBtn.disabled = false;
+      submitBtn.disabled = resetBtn.disabled = false;
     };
 
     xhr.onerror = () => {
@@ -202,7 +207,7 @@ const FALLBACK_THUMB = "https://i.ibb.co/cX2VxzDn/unknown-file.png";
       resultCard.className = "result-card bad";
       pill.textContent = "Network error";
       raw.textContent = xhr.responseText || "<no body>";
-      submitBtn.disabled = false;
+      submitBtn.disabled = resetBtn.disabled = false;
     };
 
     xhr.ontimeout = () => {
@@ -210,7 +215,7 @@ const FALLBACK_THUMB = "https://i.ibb.co/cX2VxzDn/unknown-file.png";
       resultCard.className = "result-card bad";
       pill.textContent = "Request timed out";
       raw.textContent = "";
-      submitBtn.disabled = false;
+      submitBtn.disabled = resetBtn.disabled = false;
     };
 
     xhr.send(fd);
